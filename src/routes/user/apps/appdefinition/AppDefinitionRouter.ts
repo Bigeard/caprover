@@ -329,7 +329,8 @@ router.post('/update/', function (req, res, next) {
     let containerHttpPort = Number(req.body.containerHttpPort) || 80
     let httpAuth = req.body.httpAuth
     let description = req.body.description || ''
-
+    let tags = req.body.tags || []
+    
     if (repoInfo.user) {
         repoInfo.user = repoInfo.user.trim()
     }
@@ -381,7 +382,8 @@ router.post('/update/', function (req, res, next) {
             customNginxConfig,
             preDeployFunction,
             serviceUpdateOverride,
-            websocketSupport
+            websocketSupport,
+            tags
         )
         .then(function () {
             Logger.d(`AppName is updated: ${appName}`)

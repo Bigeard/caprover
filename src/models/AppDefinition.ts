@@ -78,6 +78,11 @@ interface IHttpAuth {
     passwordHashed?: string
 }
 
+interface IAppTag {
+    name: string
+    color: string
+}
+
 interface IAppDef extends IAppDefinitionBase {
     appPushWebhook?: {
         tokenVersion: string
@@ -86,6 +91,7 @@ interface IAppDef extends IAppDefinitionBase {
     }
     httpAuth?: IHttpAuth
     appName?: string
+    tags?: IAppTag[]
     isAppBuilding?: boolean
 }
 

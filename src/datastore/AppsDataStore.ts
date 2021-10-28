@@ -617,7 +617,8 @@ class AppsDataStore {
         customNginxConfig: string,
         preDeployFunction: string,
         serviceUpdateOverride: string,
-        websocketSupport: boolean
+        websocketSupport: boolean,
+        tags: IAppTag[]
     ) {
         const self = this
         let appObj: IAppDef
@@ -691,6 +692,28 @@ class AppsDataStore {
                 appObj.preDeployFunction = preDeployFunction
                 appObj.serviceUpdateOverride = serviceUpdateOverride
                 appObj.description = description
+
+                if (appObj.tags !== tags) {
+                    appObj.tags = tags
+                    self.getAppDefinitions().then((appDefinitions) => {
+                        Object.keys(appDefinitions).forEach((appName) => {
+                            const app: IAppDef = appDefinitions[appName]
+                            if (appName && app.tags) {
+                                tags.forEach((t) => {
+                                    if (Array.isArray(app.tags)) {
+                                        const tagIndex = app.tags.findIndex(
+                                            (ft) => ft.name === t.name
+                                        )
+                                        if (tagIndex >= 0) {
+                                            app.tags[tagIndex].color = t.color
+                                        }
+                                    }
+                                })
+                                self.saveApp(appName, app)
+                            }
+                        })
+                    })
+                }
 
                 if (httpAuth && httpAuth.user) {
                     const newAuth: IHttpAuth = {
@@ -860,6 +883,7 @@ class AppsDataStore {
                 hasDefaultSubDomainSsl: false,
                 forceSsl: false,
                 websocketSupport: false,
+                tags: [],
             }
 
             resolve(defaultAppDefinition)
